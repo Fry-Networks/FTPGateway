@@ -23,10 +23,79 @@ var fs = require('fs');
 var path = require('path');
 var jsonwebtoken = require('jsonwebtoken');
 //var User = mongoose.model('User');
-const routePath = '/Users/rakshitharodrigo/Downloads/public'
+// const routePath = '/Users/rakshitharodrigo/Downloads/public'
+const routePath = '/public'
+const SftpClient = require('ssh2-sftp-client');
 
 app.use(cors())
 router.use(cors())
+
+
+const serverConfig = {
+  host: 'REDACTED_ROTATE_ME',
+  port: 22,
+  username: 'fryscrypto',
+  password: 'REDACTED_ROTATE_ME'
+};
+
+function getRemotePath(type) {
+  var remotePath = ""
+
+  switch (type) {
+      case "Satellite_Miner_indoor":
+        remotePath = "/home/fryscrypto/indoor_gnss";
+          break;
+      case "Satellite_Miner_outdoor":
+        remotePath = "/home/fryscrypto/outdoor_gnss";
+          break;
+      case "Decibel_Miner_indoor":
+        remotePath = "/home/fryscrypto/indoor_decibel";
+          break;
+      case "Decibel_Miner_outdoor":
+        remotePath = "/home/fryscrypto/outdoor_decibel";
+          break;
+      case "Bandwidth_Speed_Miner":
+        remotePath = "/home/fryscrypto/bandwidth_speed";
+          break;
+      default:
+        remotePath = "/home/fryscrypto/apitests";
+          break;
+  }
+
+  return remotePath;
+}
+
+async function uploadFileToSftpServer(localFilePath, remoteFilePath, serverConfig) {
+  const { host, port, username, password } = serverConfig;
+
+  const sftp = new SftpClient();
+
+  try {
+      await sftp.connect({
+          host,
+          port,
+          username,
+          password
+      });
+
+      await sftp.put(localFilePath, remoteFilePath);
+      console.log(`File uploaded successfully to ${remoteFilePath}`);
+  } catch (err) {
+      console.error(`Error uploading file: ${err.message}`);
+  } finally {
+      await sftp.end();
+  }
+}
+
+/**
+ * 
+ * const localFilePath = '/path/to/local/file.txt';
+ * const remoteFilePath = '/path/to/remote/file.txt';
+ * uploadFileToSftpServer(localFilePath, remoteFilePath, serverConfig);
+ * 
+ */
+
+
 
 
 
@@ -125,7 +194,13 @@ exports.uploadFile = function(req, res){
                           console.log(err)
                           return res.status(500).send(err);
                         } else {
-                          console.log('===> file upload successfully!')
+                          console.log('===> file upload successfully!');
+                          console.log('===> file type: ',req.body.type);
+                          var remoteFilePath = `${getRemotePath(req.body.type)}/${req.body.uploadFileName}`;
+                          console.log('===> file type: remoteFilePath:  ',remoteFilePath);
+
+                          uploadFileToSftpServer(uploadFilePath, remoteFilePath, serverConfig);
+
                         }
                     });
                   }
@@ -150,6 +225,10 @@ exports.uploadFile = function(req, res){
                           lastUploadedTime: currentDateTime
                         }
                       }
+
+                      
+                      
+
                     Client.findByIdAndUpdate(client._id, newValues, function (err, result) {
                       if (err) {
                         console.log(err)
