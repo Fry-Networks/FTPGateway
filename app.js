@@ -14,7 +14,7 @@ mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', true);
 const smpp = require('smpp');
 
-const routePath = '/Users/rakshitharodrigo/Downloads/public'
+const routePath = '/public'
 
 const fileUpload = require('express-fileupload');
 
