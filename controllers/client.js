@@ -91,7 +91,7 @@ exports.register = function(req, res){
         console.log("####################### not an null data : clients already exist ##########################");
         // res.json({ status: 'failed', details: "macAddress already registered!", message: "Sign up failed!" });
         // Update
-        var currentDate = Date.now;
+        var currentDate = Date.now();
         var newValues = {
           $set: {
             lastContactedTime: currentDate
