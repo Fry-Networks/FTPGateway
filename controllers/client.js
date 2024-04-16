@@ -97,12 +97,12 @@ exports.register = function(req, res){
             lastContactedTime: currentDate
           }
         }
-        Client.findByIdAndUpdate(req.body.macAddress, newValues, function (err, result) {
+        Client.findByIdAndUpdate(clients._id, newValues, function (err, result) {
           if (err) {
             console.log(err)
             throw err;
           } else {
-            Client.findById(req.body.macAddress)
+            Client.findById(clients._id)
               .exec(function (err, client) {
                 if (err) {
                   console.log('error occured');
