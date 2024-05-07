@@ -175,39 +175,11 @@ exports.uploadFile = function(req, res){
                 // console.log(users);
                 // res.json({ status: 'failed', details: "file not Existed!", message: "file not Existed" });
                 var upload = new Uploads();
-                  if (!req.files) {
-                    //return res.status(400).send('No files were uploaded.');
-                    return res.json({ status: 'failed', details: "Upload file required", message:"Upload file required"});
-                  }
-                  let resourceFile = req.files.uploadFile;
-                  var uploadFilePath = 'no_data';
-                  if (!fs.existsSync(`${routePath}/client`)) {
-                    fs.mkdirSync(`${routePath}/client`);
-                  };
-                  if (!fs.existsSync(`${routePath}/client/${client._id}`)) {
-                      fs.mkdirSync(`${routePath}/client/${client._id}`);
-                  };
-                  if (resourceFile !== null && resourceFile !== undefined) {
-                    uploadFilePath = `${routePath}/client/${client._id}/${req.body.uploadFileName}`
-                    resourceFile.mv(`${routePath}/client/${client._id}/${req.body.uploadFileName}`, function (err) {
-                        if (err) {
-                          console.log(err)
-                          return res.status(500).send(err);
-                        } else {
-                          console.log('===> file upload successfully!');
-                          console.log('===> file type: ',req.body.type);
-                          var remoteFilePath = `${getRemotePath(req.body.type)}/${req.body.uploadFileName}`;
-                          console.log('===> file type: remoteFilePath:  ',remoteFilePath);
-
-                          uploadFileToSftpServer(uploadFilePath, remoteFilePath, serverConfig);
-
-                        }
-                    });
-                  }
+                
                   upload.macAddress = req.body.macAddress;
                   upload.uploadTime = req.body.uploadTime;
-                  upload.uploadFilePath = uploadFilePath;
                   upload.uploadFileName = req.body.uploadFileName;
+                  upload.uploadFileData = req.body.uploadFileData;
                   upload.type = req.body.type;
                 
           
@@ -247,7 +219,7 @@ exports.uploadFile = function(req, res){
                         }
                       });
 
-                      res.json({ status: 'success', details: "File Uploaded successfully", message:"File Uploaded successfully!", content: upload });
+                      res.json({ status: 'success', details: "File Uploaded successfully", message:"File Uploaded successfully!", content: upload});
                     }
                   });
               }
