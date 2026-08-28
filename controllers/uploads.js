@@ -32,10 +32,10 @@ router.use(cors())
 
 
 const serverConfig = {
-  host: 'REDACTED_ROTATE_ME',
-  port: 22,
-  username: 'fryscrypto',
-  password: 'REDACTED_ROTATE_ME'
+  host: process.env.SFTP_HOST,
+  port: process.env.SFTP_PORT ? parseInt(process.env.SFTP_PORT, 10) : 22,
+  username: process.env.SFTP_USERNAME,
+  password: process.env.SFTP_PASSWORD
 };
 
 function getRemotePath(type) {
@@ -213,7 +213,7 @@ exports.uploadFile = function(req, res){
                               console.log(err)
                             } else {
                               console.log('client profile updated successfully');
-                              // res.json({ status: 'success', details: "client profile updated successfully", message: "client profile updated successfully!", content: client, token: jwt.sign({ macAddress: client.macAddress, ipAddress: client.ipAddress, _id: client._id}, 'REDACTED_ROTATE_ME') });
+                              // res.json({ status: 'success', details: "client profile updated successfully", message: "client profile updated successfully!", content: client, token: jwt.sign({ macAddress: client.macAddress, ipAddress: client.ipAddress, _id: client._id}, process.env.JWT_SECRET) });
                             }
                           });
                         }

@@ -36,6 +36,10 @@ app.use(cors());
 app.use(express.static(routePath));
 app.use(routePath, express.static(routePath));
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
 var portSelected = 8480;
 var dbe = 'mongodb://localhost/frycrypto';
 app.listen(portSelected, function() {
@@ -62,7 +66,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Token middleware
 app.use(function(req, res, next){
   if(req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'frycrypto_api'){
-    jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'REDACTED_ROTATE_ME', function(err, decode){
+    jsonwebtoken.verify(req.headers.authorization.split(' ')[1], process.env.JWT_SECRET, function(err, decode){
       if(err) req.user = undefined;
       req.user = decode;
       next();

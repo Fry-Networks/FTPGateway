@@ -108,7 +108,7 @@ exports.register = function(req, res){
                   console.log('error occured');
                   console.log(err)
                 } else {
-                  res.json({ status: 'success', details: "client profile updated successfully", message: "client profile updated successfully!", content: client, token: jwt.sign({ macAddress: client.macAddress, ipAddress: client.ipAddress, _id: client._id}, 'REDACTED_ROTATE_ME') });
+                  res.json({ status: 'success', details: "client profile updated successfully", message: "client profile updated successfully!", content: client, token: jwt.sign({ macAddress: client.macAddress, ipAddress: client.ipAddress, _id: client._id}, process.env.JWT_SECRET) });
                 }
               });
             }
@@ -130,7 +130,7 @@ exports.register = function(req, res){
             res.send(err);
           } else {
             client.password = undefined;
-            res.json({ status: 'success', details: "Register successfully", message: "Register successfully!", content: client, token: jwt.sign({ macAddress: client.macAddress, ipAddress: client.ipAddress, _id: client._id}, 'REDACTED_ROTATE_ME') });
+            res.json({ status: 'success', details: "Register successfully", message: "Register successfully!", content: client, token: jwt.sign({ macAddress: client.macAddress, ipAddress: client.ipAddress, _id: client._id}, process.env.JWT_SECRET) });
           }
         });
       }
